@@ -33,6 +33,10 @@ env:
   BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
   BUILD_VERSION_LABEL: ${{github.event.client_payload.build_version_label}}
   BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
+  # TELEGRAM
+  TELEGRAM_GROUP_ID: ${{secrets.TELEGRAM_GROUP_ID}}
+  TELEGRAM_TOPIC_ID: ${{secrets.TELEGRAM_TOPIC_ID}}
+  TELEGRAM_BOT_TOKEN: ${{secrets.TELEGRAM_BOT_TOKEN}}
 
 defaults:
   run:
