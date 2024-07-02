@@ -63,6 +63,7 @@ jobs:
         timeout-minutes: 1
         with:
           APP_NAME: Liberty Exchange Customer
+          MESSAGE_TITLE: Setup bản build mới...
 
   # prepare:
   #   name: Prepare ${{ matrix.platform  }}
