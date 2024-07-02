@@ -27,6 +27,12 @@ env:
   GH_PAT: ${{secrets.GH_PAT}}
   REF_NAME: ${{ github.event.client_payload.ref_name }}
   # BUILD ENVIRONMENT FILE
+  # BUILD ENVIRONMENT VARIABLE
+  BUILD_VERSION_ENV: ${{github.event.client_payload.build_version_env}}
+  BUILD_VERSION_FULL: ${{github.event.client_payload.build_version_full}}
+  BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
+  BUILD_VERSION_LABEL: ${{github.event.client_payload.build_version_label}}
+  BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
 
 defaults:
   run:
@@ -44,12 +50,15 @@ jobs:
           token: ${{ env.GH_PAT }}
           ref: ${{ env.REF_NAME}}
 
+      - name: Load Build Environment
+        shell: bash
+        run: bash scripts/load_build_environment.sh
+
       - name: Send telegram message
+        uses: ./.github/actions/send-telegram-message
         timeout-minutes: 1
-        run: |
-          source ./scripts/send_message.sh
-          MESSAGE=$(get_message_information "Liberty Exchange Customer")
-          send_telegram "Setup bản build mới...${MESSAGE}"
+        with:
+          APP_NAME: Liberty Exchange Customer
 
   # prepare:
   #   name: Prepare ${{ matrix.platform  }}
