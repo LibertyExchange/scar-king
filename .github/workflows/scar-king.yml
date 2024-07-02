@@ -26,6 +26,7 @@ env:
   MAIN_REPOSITORY: ${{secrets.MAIN_REPOSITORY}}
   GH_PAT: ${{secrets.GH_PAT}}
   REF_NAME: ${{ github.event.client_payload.ref_name }}
+  # BUILD ENVIRONMENT FILE
 
 defaults:
   run:
@@ -33,12 +34,8 @@ defaults:
 
 jobs:
   init:
-    name: Init
+    name: Init Deployment
     runs-on: macos-14
-    # outputs:
-    #   matrix: ${{ steps.set-matrix.outputs.value }}
-    #   message-information: ${{ steps.get-message-information.outputs.value }}
-    #   env: ${{ steps.set-env.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,50 +44,12 @@ jobs:
           token: ${{ env.GH_PAT }}
           ref: ${{ env.REF_NAME}}
 
-      - name: Checkdqwd
-        shell: bash
-        run: ls
-
-  #     - name: Set matrix
-  #       id: set-matrix
-  #       run: |
-  #         MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
-  #         if [[ "$REF_NAME" =~ "prd" ]]; then
-  #           MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"},{\"format\":\"AAB\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
-  #         fi
-  #         echo "value=$MATRIX" >> $GITHUB_OUTPUT
-
-  #     - name: Set env
-  #       id: set-env
-  #       run: |
-  #         ENV='dev'
-  #         if [[ "$REF_NAME" =~ "prd" ]]; then
-  #           ENV='prd'
-  #         elif [[ "$REF_NAME" =~ "stg" ]]; then
-  #           ENV='stg'
-  #         fi
-  #         echo "value=$ENV" >> $GITHUB_OUTPUT
-
-  #     - name: Generate message
-  #       id: get-message-information
-  #       run: |
-  #         source .github/scripts/utils.sh
-  #         echo "value=$(get_message_information)" >> "$GITHUB_OUTPUT"
-  #       timeout-minutes: 1
-
-  #     - name: Log value
-  #       run: |
-  #         echo "tag-source: $REF_NAME"
-  #         echo "matrix: ${{ steps.set-matrix.outputs.value }}"
-  #         echo "message-information: ${{ steps.get-message-information.outputs.value }}"
-  #         echo "env: ${{ steps.set-env.outputs.value }}"
-
-  #     - name: Send telegram message
-  #       if: vars.IS_SILENT != 'true'
-  #       uses: PacificPromise/macos-telegram-action@main
-  #       with:
-  #         type: topic
-  #         message: "🎬 -  Start build: ${{ steps.get-message-information.outputs.value }}"
+      - name: Send telegram message
+        timeout-minutes: 1
+        run: |
+          source ./scripts/send_message.sh
+          MESSAGE=$(get_message_information "Liberty Exchange Customer")
+          send_telegram "Setup bản build mới...${MESSAGE}"
 
   # prepare:
   #   name: Prepare ${{ matrix.platform  }}
