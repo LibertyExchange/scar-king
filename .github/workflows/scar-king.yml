@@ -255,7 +255,7 @@ jobs:
         if: matrix.format == 'IPA'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: ios build_appstore mode:$BUILD_VERSION_ENV
+          lane: "ios build_appstore mode:$BUILD_VERSION_ENV"
 
       - name: Build APK
         if: matrix.format == 'APK'
@@ -264,7 +264,7 @@ jobs:
           lane: android build_apk
 
       - name: Build AAB
-        if: ${{(matrix.format == 'AAB') && ('$BUILD_VERSION_ENV' == 'pro')}}
+        if: ${{(matrix.format == 'AAB') && ('$BUILD_VERSION_ENV' == 'stg')}}
         uses: maierj/fastlane-action@v3.1.0
         with:
           lane: android build_aab
