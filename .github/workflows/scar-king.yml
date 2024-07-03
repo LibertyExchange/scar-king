@@ -29,12 +29,12 @@ env:
   # BUILD ENVIRONMENT FILE
   # BUILD ENVIRONMENT VARIABLE
   # BUILD_REF_NAME: ${{github.event.client_payload.build_version_tag}}
-  BUILD_VERSION_TAG: ${{github.event.client_payload.build_version_tag}}
-  BUILD_VERSION_ENV: ${{github.event.client_payload.build_version_env}}
-  BUILD_VERSION_FULL: ${{github.event.client_payload.build_version_full}}
-  BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
-  BUILD_VERSION_LABEL: ${{github.event.client_payload.build_version_label}}
-  BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
+  # BUILD_VERSION_TAG: ${{github.event.client_payload.build_version_tag}}
+  # BUILD_VERSION_ENV: ${{github.event.client_payload.build_version_env}}
+  # BUILD_VERSION_FULL: ${{github.event.client_payload.build_version_full}}
+  # BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
+  # BUILD_VERSION_LABEL: ${{github.event.client_payload.build_version_label}}
+  # BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
   # TELEGRAM
   TELEGRAM_GROUP_ID: ${{secrets.TELEGRAM_GROUP_ID}}
   TELEGRAM_TOPIC_ID: ${{secrets.TELEGRAM_TOPIC_ID}}
@@ -148,6 +148,7 @@ jobs:
 
       # NOTE: Load Environment Variable
       - name: Load Build Environment
+        id: build_variables
         shell: bash
         run: bash scripts/load_build_environment.sh
 
@@ -220,8 +221,8 @@ jobs:
         uses: irgaly/xcode-cache@v1
         if: matrix.platform == 'IOS'
         with:
-          key: xcode-cache-deriveddata-${{ env.BUILD_VERSION_ENV }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: xcode-cache-deriveddata-${{ env.BUILD_VERSION_ENV }}-
+          key: xcode-cache-deriveddata-$BUILD_VERSION_ENV-${{ hashFiles('yarn.lock') }}
+          restore-keys: xcode-cache-deriveddata-$$BUILD_VERSION_ENV-
 
       - name: Load Secret Files
         run: bash scripts/config_secret_file.sh
