@@ -28,6 +28,7 @@ env:
   REF_NAME: ${{ github.event.client_payload.ref_name }}
   # BUILD ENVIRONMENT FILE
   # BUILD ENVIRONMENT VARIABLE
+  BUILD_VERSION_TAG: ${{github.event.client_payload.build_version_tag}}
   BUILD_VERSION_ENV: ${{github.event.client_payload.build_version_env}}
   BUILD_VERSION_FULL: ${{github.event.client_payload.build_version_full}}
   BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
@@ -56,66 +57,66 @@ jobs:
 
       - name: Load Build Environment
         shell: bash
-        run: bash scripts/load_build_environment.sh
+        run: bash scripts/load_build_environment.sh ${{env.BUILD_VERSION_TAG}}
 
-      - name: Send telegram message
-        uses: ./.github/actions/send-telegram-message
-        timeout-minutes: 1
+      # - name: Send telegram message
+      #   uses: ./.github/actions/send-telegram-message
+      #   timeout-minutes: 1
+      #   with:
+      #     APP_NAME: Liberty Exchange Customer
+      #     MESSAGE_TITLE: Setup bản build mới...
+
+  prepare:
+    name: Prepare build
+    continue-on-error: true
+    needs: [init]
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - name: "macos-14"
+            platform: "IOS"
+          - name: "ubuntu-22.04"
+            platform: "ANDROID"
+    runs-on: ${{ matrix.name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          APP_NAME: Liberty Exchange Customer
-          MESSAGE_TITLE: Setup bản build mới...
+          repository: ${{ env.MAIN_REPOSITORY }}
+          token: ${{ env.GH_PAT }}
+          ref: ${{ env.REF_NAME}}
 
-  # prepare:
-  #   name: Prepare ${{ matrix.platform  }}
-  #   continue-on-error: true
-  #   needs: [init]
-  #   strategy:
-  #     fail-fast: true
-  #     matrix:
-  #       include:
-  #         - name: "macos-14"
-  #           platform: "IOS"
-  #         - name: "ubuntu-22.04"
-  #           platform: "ANDROID"
-  #   runs-on: ${{ matrix.name }}
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: ${{ env.MAIN_REPOSITORY }}
-  #         token: ${{ secrets.GH_PAT }}
-  #         ref: ${{ github.event.client_payload.ref_name}}
+      - name: Setup Node Version
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
 
-  #     - name: Setup Node v18
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version-file: ".nvmrc"
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ matrix.platform }}-cache-node-modules-${{ hashFiles('yarn.lock') }}
+          lookup-only: true
 
-  #     - name: Cache node_modules
-  #       id: cache-node-modules
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: node_modules
-  #         key: ${{ matrix.platform }}-cache-node-modules-${{ hashFiles('yarn.lock') }}
-  #         lookup-only: true
+      - name: Unlock ssh agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_SDK_CORE_CLIENT }}
 
-  #     - name: Unlock ssh agent
-  #       uses: webfactory/ssh-agent@v0.9.0
-  #       with:
-  #         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_SDK_CORE_CLIENT }}
+      - name: Run yarn install
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        uses: borales/actions-yarn@v5
+        with:
+          cmd: install --network-concurrency 1
 
-  #     - name: Run yarn install
-  #       if: steps.cache-node-modules.outputs.cache-hit != 'true'
-  #       uses: borales/actions-yarn@v5
-  #       with:
-  #         cmd: install --network-concurrency 1
-
-  #     - name: Send telegram message failure
-  #       if: ${{ failure() && vars.IS_SILENT != 'true' }}
-  #       uses: PacificPromise/macos-telegram-action@main
-  #       with:
-  #         type: topic
-  #         message: "💥 - Failure ${{ matrix.platform }}: ${{ needs.init.outputs.message-information }}"
+      # - name: Send telegram message failure
+      #   if: ${{ failure() && vars.IS_SILENT != 'true' }}
+      #   uses: PacificPromise/macos-telegram-action@main
+      #   with:
+      #     type: topic
+      #     message: "💥 - Failure ${{ matrix.platform }}: ${{ needs.init.outputs.message-information }}"
 
   # deploy:
   #   name: Deployment ${{ matrix.format }}
