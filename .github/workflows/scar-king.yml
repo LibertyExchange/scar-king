@@ -43,6 +43,10 @@ jobs:
   init:
     name: Init Deployment
     runs-on: macos-14
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.value }}
+      # message-information: ${{ steps.get-message-information.outputs.value }}
+      # env: ${{ steps.set-env.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,6 +58,15 @@ jobs:
       - name: Load Build Environment
         shell: bash
         run: bash scripts/load_build_environment.sh
+
+      - name: Set matrix
+        id: set-matrix
+        run: |
+          MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
+          if [[ "$BUILD_VERSION_ENV" == "pro" ]]; then
+            MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"},{\"format\":\"AAB\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
+          fi
+          echo "value=$MATRIX" >> $GITHUB_OUTPUT
 
       # - name: Send telegram message
       #   uses: ./.github/actions/send-telegram-message
@@ -107,32 +120,15 @@ jobs:
         with:
           cmd: install --network-concurrency 1
 
-      # - name: Send telegram message failure
-      #   if: ${{ failure() && vars.IS_SILENT != 'true' }}
-      #   uses: PacificPromise/macos-telegram-action@main
-      #   with:
-      #     type: topic
-      #     message: "💥 - Failure ${{ matrix.platform }}: ${{ needs.init.outputs.message-information }}"
-
   deploy:
     name: Deployment ${{ matrix.format }}
     continue-on-error: true
+    needs: [init, prepare]
     strategy:
       fail-fast: true
       matrix:
-        include:
-          - name: "macos-14"
-            platform: "IOS"
-            format: IPA
-          - name: "ubuntu-22.04"
-            platform: "ANDROID"
-            format: APK
-          - name: "ubuntu-22.04"
-            platform: "ANDROID"
-            format: AAB
-
+        include: ${{ fromJson(needs.init.outputs.matrix) }}
     runs-on: ${{ matrix.name }}
-    needs: [init, prepare]
     timeout-minutes: 60
     steps:
       - name: Checkout
