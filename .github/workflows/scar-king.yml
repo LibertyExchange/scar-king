@@ -235,7 +235,7 @@ jobs:
 
       - name: Install certificate and provision
         if: matrix.platform == 'IOS'
-        run: bash .github/scripts/install_cert_and_provision.sh
+        run: bash scripts/install_cert_and_provision.sh
 
       - name: Link Node (/usr/local/bin/node)
         if: matrix.platform == 'IOS'
