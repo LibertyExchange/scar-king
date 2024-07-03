@@ -129,6 +129,7 @@ jobs:
           - name: "ubuntu-22.04"
             platform: "ANDROID"
             format: AAB
+
     runs-on: ${{ matrix.name }}
     needs: [init, prepare]
     timeout-minutes: 60
@@ -251,23 +252,23 @@ jobs:
         run: ln -s $(command -v node) /usr/local/bin/node
 
       # NOTE: start build
-      - name: Build IPA
-        if: matrix.format == 'IPA'
-        uses: maierj/fastlane-action@v3.1.0
-        with:
-          lane: "ios build_ipa"
+      # - name: Build IPA
+      #   if: matrix.format == 'IPA'
+      #   uses: maierj/fastlane-action@v3.1.0
+      #   with:
+      #     lane: "ios build_ipa"
 
-      - name: Build APK
-        if: matrix.format == 'APK'
-        uses: maierj/fastlane-action@v3.1.0
-        with:
-          lane: android build_apk
+      # - name: Build APK
+      #   if: matrix.format == 'APK'
+      #   uses: maierj/fastlane-action@v3.1.0
+      #   with:
+      #     lane: android build_apk
 
-      - name: Build AAB
-        if: ${{(matrix.format == 'AAB') && ('$BUILD_VERSION_ENV' == 'stg')}}
-        uses: maierj/fastlane-action@v3.1.0
-        with:
-          lane: android build_aab
+      # - name: Build AAB
+      #   if: ${{(matrix.format == 'AAB') && ('${BUILD_VERSION_ENV}' == 'stg')}}
+      #   uses: maierj/fastlane-action@v3.1.0
+      #   with:
+      #     lane: android build_aab
 
       # NOTE: deploy
       # - name: Deploy ipa
