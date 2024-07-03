@@ -144,14 +144,13 @@ jobs:
       # NOTE: Load Environment Variable
       - name: Load Build Environment
         id: build_variables
-        shell: bash
         run: bash scripts/load_build_environment.sh
 
       # NOTE: Setup Build Environment
-      - name: Setup ruby 3.2.2
+      - name: Setup ruby 3.0.0
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: "3.2.2"
+          ruby-version: "3.0.0"
           bundler-cache: true
 
       - name: Setup Node v18
@@ -228,16 +227,6 @@ jobs:
       - name: Change Version And Build Number
         run: bash scripts/config_build_version.sh
 
-      # NOTE: load environment and file
-      # - name: Load secret files
-      #   run: bash .github/scripts/load_secret_file.sh
-
-      # - name: Change version and build number
-      #   run: bash .github/scripts/change_version_and_build_number.sh
-
-      # - name: Config environment
-      #   run: bash .github/scripts/config_environment.sh
-
       - name: Generate launcher icon
         uses: borales/actions-yarn@v5
         with:
@@ -252,11 +241,11 @@ jobs:
         run: ln -s $(command -v node) /usr/local/bin/node
 
       # NOTE: start build
-      # - name: Build IPA
-      #   if: matrix.format == 'IPA'
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: "ios build_ipa"
+      - name: Build IPA
+        if: matrix.format == 'IPA'
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: ios build_ipa
 
       # - name: Build APK
       #   if: matrix.format == 'APK'
