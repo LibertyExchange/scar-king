@@ -25,16 +25,10 @@ env:
   # PRO_GOOGLESERVICE_INFO_PLIST: ${{ secrets.CUCU_PRO_GOOGLESERVICE_INFO_PLIST }}
   MAIN_REPOSITORY: ${{secrets.MAIN_REPOSITORY}}
   GH_PAT: ${{secrets.GH_PAT}}
-  REF_NAME: ${{ github.event.client_payload.ref_name }}
   # BUILD ENVIRONMENT FILE
   # BUILD ENVIRONMENT VARIABLE
-  # BUILD_REF_NAME: ${{github.event.client_payload.build_version_tag}}
-  # BUILD_VERSION_TAG: ${{github.event.client_payload.build_version_tag}}
-  # BUILD_VERSION_ENV: ${{github.event.client_payload.build_version_env}}
-  # BUILD_VERSION_FULL: ${{github.event.client_payload.build_version_full}}
-  # BUILD_VERSION_NUMBER: ${{github.event.client_payload.build_version_number}}
-  # BUILD_VERSION_LABEL: ${{github.event.client_payload.build_version_label}}
-  # BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
+  REF_NAME: ${{ github.event.client_payload.ref_name }}
+  BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
   # TELEGRAM
   TELEGRAM_GROUP_ID: ${{secrets.TELEGRAM_GROUP_ID}}
   TELEGRAM_TOPIC_ID: ${{secrets.TELEGRAM_TOPIC_ID}}
@@ -270,7 +264,7 @@ jobs:
           lane: android build_apk
 
       - name: Build AAB
-        if: matrix.format == 'AAB'
+        if: ${{(matrix.format == 'AAB') && ('$BUILD_VERSION_ENV' == 'pro')}}
         uses: maierj/fastlane-action@v3.1.0
         with:
           lane: android build_aab
