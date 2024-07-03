@@ -260,11 +260,11 @@ jobs:
       #     lane: android build_aab
 
       # NOTE: deploy
-      # - name: Deploy ipa
-      #   if: matrix.format == 'IPA'
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: ios testflight
+      - name: Deploy ipa
+        if: matrix.format == 'IPA'
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: ios deploy_ipa
 
       # - name: Deploy APK to firebase
       #   if: matrix.format == 'APK'
