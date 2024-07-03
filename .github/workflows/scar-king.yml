@@ -248,17 +248,17 @@ jobs:
         with:
           lane: ios build_ipa
 
-      # - name: Build APK
-      #   if: matrix.format == 'APK'
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: android build_apk
+      - name: Build APK
+        if: matrix.format == 'APK'
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: android build_apk
 
-      # - name: Build AAB
-      #   if: ${{(matrix.format == 'AAB') && ('${BUILD_VERSION_ENV}' == 'stg')}}
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: android build_aab
+      - name: Build AAB
+        if: ${{(matrix.format == 'AAB') && ('${BUILD_VERSION_ENV}' == 'pro')}}
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: android build_aab
 
       # NOTE: deploy
       - name: Deploy ipa
