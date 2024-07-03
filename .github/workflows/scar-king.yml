@@ -188,7 +188,7 @@ jobs:
       # NOTE: Install Libs
       - name: Cache node_modules
         id: cache-node-modules
-        uses: actions/cache/restore@v4
+        uses: actions/cache@v4
         with:
           path: node_modules
           key: ${{ matrix.platform }}-cache-node-modules-${{ hashFiles('yarn.lock') }}
