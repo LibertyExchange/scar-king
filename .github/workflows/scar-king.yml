@@ -40,7 +40,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.value }}
       # message-information: ${{ steps.get-message-information.outputs.value }}
-      # env: ${{ steps.set-env.outputs.value }}
+      env: ${{ steps.set-env.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,8 +50,10 @@ jobs:
           ref: ${{ env.REF_NAME}}
 
       - name: Load Build Environment
-        shell: bash
-        run: bash scripts/load_build_environment.sh
+        id: set-env
+        run: |
+          bash scripts/load_build_environment.sh
+          echo "value=$BUILD_VERSION_ENV" >> $GITHUB_OUTPUT
 
       - name: Set matrix
         id: set-matrix
@@ -136,7 +138,9 @@ jobs:
       # NOTE: Load Environment Variable
       - name: Load Build Environment
         id: build_variables
-        run: bash scripts/load_build_environment.sh
+        run: |
+          bash scripts/load_build_environment.sh
+          echo "env=$BUILD_VERSION_ENV" >> $GITHUB_OUTPUT
 
       # NOTE: Setup Build Environment
       - name: Setup ruby 3.0.0
@@ -207,8 +211,8 @@ jobs:
         uses: irgaly/xcode-cache@v1
         if: matrix.platform == 'IOS'
         with:
-          key: xcode-cache-deriveddata-${{'$BUILD_VERSION_ENV'}}-${{ hashFiles('yarn.lock') }}
-          restore-keys: xcode-cache-deriveddata-${{'$BUILD_VERSION_ENV'}}-
+          key: xcode-cache-deriveddata-${{needs.init.outputs.env}}-${{ hashFiles('yarn.lock') }}
+          restore-keys: xcode-cache-deriveddata-${{needs.init.outputs.env}}-
 
       - name: Load Secret Files
         run: bash scripts/load_secret_file.sh
