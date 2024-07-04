@@ -82,7 +82,7 @@ jobs:
           - name: "ubuntu-22.04"
             platform: "ANDROID"
     runs-on: ${{ matrix.name }}
-    if: matrix.node-version != '14.x'
+    # if: matrix.node-version != '14.x'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
