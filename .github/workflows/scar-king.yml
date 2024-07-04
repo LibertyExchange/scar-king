@@ -260,7 +260,7 @@ jobs:
         if: matrix.format == 'APK'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: distribute_firebase_apk
+          lane: android distribute_firebase_apk
 
       # - name: Deploy AAB to playstore
       #   if: matrix.format == 'AAB'
