@@ -8,6 +8,7 @@ on:
       - pro-*
 
 env:
+  NO_FLIPPER: 1
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
   GH_PAT: ${{secrets.GH_PAT}}
@@ -81,6 +82,7 @@ jobs:
           - name: "ubuntu-22.04"
             platform: "ANDROID"
     runs-on: ${{ matrix.name }}
+    if: matrix.node-version != '14.x'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
