@@ -256,11 +256,11 @@ jobs:
         with:
           lane: ios deploy_ipa
 
-      # - name: Deploy APK to firebase
-      #   if: matrix.format == 'APK'
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: android beta
+      - name: Deploy APK to firebase
+        if: matrix.format == 'APK'
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: distribute_firebase_apk
 
       # - name: Deploy AAB to playstore
       #   if: matrix.format == 'AAB'
