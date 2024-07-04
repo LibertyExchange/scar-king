@@ -201,12 +201,12 @@ jobs:
         working-directory: ios
         run: pod install
 
-      - name: Cache Xcode build
-        uses: irgaly/xcode-cache@v1
-        if: matrix.platform == 'IOS'
-        with:
-          key: xcode-cache-deriveddata-$BUILD_VERSION_ENV-${{ hashFiles('yarn.lock') }}
-          restore-keys: xcode-cache-deriveddata-$$BUILD_VERSION_ENV-
+      # - name: Cache Xcode build
+      #   uses: irgaly/xcode-cache@v1
+      #   if: matrix.platform == 'IOS'
+      #   with:
+      #     key: xcode-cache-deriveddata-$BUILD_VERSION_ENV-${{ hashFiles('yarn.lock') }}
+      #     restore-keys: xcode-cache-deriveddata-$$BUILD_VERSION_ENV-
 
       - name: Load Secret Files
         run: bash scripts/load_secret_file.sh
@@ -232,16 +232,16 @@ jobs:
           echo "Bundle Version $(bundle -v)"
           echo "Cocoapod Version $(gem which cocoapods)"
 
-      # - name: Link Node (/usr/local/bin/node)
-      #   if: matrix.platform == 'IOS'
-      #   run: ln -s $(command -v node) /usr/local/bin/node
+      - name: Link Node (/usr/local/bin/node)
+        if: matrix.platform == 'IOS'
+        run: ln -s $(command -v node) /usr/local/bin/node
 
       # NOTE: start build
       - name: Build IPA
         if: matrix.format == 'IPA'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: ios build_ipa
+          lane: ios build_ios
 
       - name: Build APK
         if: matrix.format == 'APK'
@@ -260,7 +260,7 @@ jobs:
         if: matrix.format == 'IPA'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: ios deploy_ipa
+          lane: ios deploy_ios
 
       - name: Deploy APK to firebase
         if: matrix.format == 'APK'
