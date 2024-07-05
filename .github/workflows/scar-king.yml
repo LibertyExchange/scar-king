@@ -139,6 +139,10 @@ jobs:
           - "AAB"
         build_env:
           - "stg"
+        exclude:
+          # - build_enabled: false
+          - format: "AAB"
+            build_env: "stg"
         include:
           - format: "IPA"
             name: "macos-14"
@@ -177,10 +181,6 @@ jobs:
         #     # build_enabled: ${{contains(github.event.client_payload.build_env,'pro')}}
         #     build_cmd: android build_aab
         #     deploy_cmd: android distribute_firebase_aab
-        exclude:
-          # - build_enabled: false
-          - format: "AAB"
-            build_env: "stg"
 
     runs-on: ${{ matrix.name }}
     timeout-minutes: 60
