@@ -135,11 +135,6 @@ jobs:
           token: ${{ env.GH_PAT }}
           ref: ${{ env.REF_NAME}}
 
-      # NOTE: Load Environment Variable
-      - name: Load Build Environment
-        id: build_variables
-        run: bash scripts/load_build_environment.sh
-
       # NOTE: Setup Build Environment
       - name: Setup ruby 3.0.0
         uses: ruby/setup-ruby@v1
@@ -212,11 +207,15 @@ jobs:
           key: xcode-cache-deriveddata-${{env.BUILD_ENV}}-${{ hashFiles('yarn.lock') }}
           restore-keys: xcode-cache-deriveddata-${{env.BUILD_ENV}}-
 
+      # NOTE: Load Environment Variable
+      - name: Load Build Environment
+        run: bash scripts/load_build_environment.sh
+
       - name: Load Secret Files
         run: bash scripts/load_secret_file.sh
 
       - name: Config Environment
-        run: bash scripts/config_environment.sh
+        run: bash scripts/load_build_configuration
 
       - name: Change Version And Build Number
         run: bash scripts/config_build_version.sh
@@ -228,13 +227,7 @@ jobs:
 
       - name: Install certificate and provision
         if: matrix.platform == 'IOS'
-        run: bash scripts/install_cert_and_provision.sh
-
-      # - name: Log value
-      #   run: |
-      #     echo "Gem Version $(gem -v)"
-      #     echo "Bundle Version $(bundle -v)"
-      #     echo "Cocoapod Version $(gem which cocoapods)"
+        run: bash scripts/load_cert_and_provision
 
       - name: Link Node (/usr/local/bin/node)
         if: matrix.platform == 'IOS'
