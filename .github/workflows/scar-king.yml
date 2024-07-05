@@ -133,24 +133,28 @@ jobs:
       matrix:
         # include: ${{ fromJson(needs.init.outputs.matrix) }}
         # name: ["macos-14", "ubuntu-22.04", "ubuntu-22.04"]
-        format: ["IPA", "APK", "AAB"]
-        build_env: ["$BUILD_ENV"]
+        format:
+          - "IPA"
+          - "APK"
+          - "AAB"
+        build_env:
+          - ${{github.event.client_payload.build_env}}
         include:
           - format: "IPA"
             name: "macos-14"
             platform: "IOS"
-            build_cmd: ios build_ios
-            deploy_cmd: ios deploy_ios
+            build_cmd: "ios build_ios"
+            deploy_cmd: "ios deploy_ios"
           - format: "APK"
             name: "ubuntu-22.04"
             platform: "ANDROID"
-            build_cmd: android build_apk
-            deploy_cmd: android distribute_firebase_apk
+            build_cmd: "android build_apk"
+            deploy_cmd: "android distribute_firebase_apk"
           - format: "AAB"
             name: "ubuntu-22.04"
             platform: "ANDROID"
-            build_cmd: android build_aab
-            deploy_cmd: android distribute_firebase_aab
+            build_cmd: "android build_aab"
+            deploy_cmd: "android distribute_firebase_aab"
         # include:
         #   - name: "macos-14"
         #     format: "IPA"
