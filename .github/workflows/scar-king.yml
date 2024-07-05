@@ -138,7 +138,7 @@ jobs:
           - "APK"
           - "AAB"
         build_env:
-          - ${{github.event.client_payload.build_env}}
+          - "stg"
         include:
           - format: "IPA"
             name: "macos-14"
