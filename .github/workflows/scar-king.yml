@@ -163,24 +163,22 @@ jobs:
           - name: "macos-14"
             format: "IPA"
             platform: "IOS"
-            # build_env: ${{github.event.client_payload.build_env}}
-            # build_enabled: true
+            build_env: ${{github.event.client_payload.build_env}}
             build_cmd: ios build_ios
             deploy_cmd: ios deploy_ios
           - name: "ubuntu-22.04"
             format: "APK"
             platform: "ANDROID"
-            # build_env: ${{github.event.client_payload.build_env}}
-            # build_enabled: true
+            build_env: ${{github.event.client_payload.build_env}}
             build_cmd: android build_apk
             deploy_cmd: android distribute_firebase_apk
           - name: "ubuntu-22.04"
             format: "AAB"
             platform: "ANDROID"
-            # build_env: ${{github.event.client_payload.build_env}}
-            # build_enabled: ${{contains(github.event.client_payload.build_env,'pro')}}
+            build_env: ${{github.event.client_payload.build_env}}
             build_cmd: android build_aab
             deploy_cmd: android distribute_firebase_aab
+            condition: ${{ github.event.client_payload.build_env != 'stg' }}
     concurrency:
       group: ${{ github.workflow }}-${{ matrix.format }}
       cancel-in-progress: ${{ matrix.format == 'AAB' && github.event.client_payload.build_env == 'stg' }}
