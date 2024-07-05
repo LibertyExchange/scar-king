@@ -126,15 +126,15 @@ jobs:
     needs: [init, prepare]
     # variables:
     #   BUILD_ENV: ${{github.event.client_payload.build_env}}
-    env:
-      BUILD_ENV: ${{github.event.client_payload.build_env}}
+    # env:
+    #   BUILD_ENV: ${{github.event.client_payload.build_env}}
     strategy:
       fail-fast: true
       matrix:
         # include: ${{ fromJson(needs.init.outputs.matrix) }}
         # name: ["macos-14", "ubuntu-22.04", "ubuntu-22.04"]
         format: ["IPA", "APK", "AAB"]
-        build_env: ${{github.event.client_payload.build_env}}
+        build_env: ["$BUILD_ENV"]
         include:
           - format: "IPA"
             name: "macos-14"
