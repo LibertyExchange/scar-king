@@ -182,7 +182,7 @@ jobs:
             build_cmd: android build_aab
             deploy_cmd: android distribute_firebase_aab
     concurrency:
-      group: ${{ github.workflow }}-${{github.event.client_payload.ref_name}}
+      group: ${{ github.workflow }}-${{ matrix.format }}
       cancel-in-progress: ${{ matrix.format == 'AAB' && github.event.client_payload.build_env == 'stg' }}
     runs-on: ${{ matrix.name }}
     timeout-minutes: 60
