@@ -121,7 +121,7 @@ jobs:
           cmd: install --network-concurrency 1
 
   deploy:
-    name: Deployment ${{ matrix.format }}
+    name: Deployment
     continue-on-error: true
     needs: [init, prepare]
     # variables:
