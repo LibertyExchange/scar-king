@@ -159,26 +159,26 @@ jobs:
         #     platform: "ANDROID"
         #     build_cmd: "android build_aab"
         #     deploy_cmd: "android distribute_firebase_aab"
-        include:
-          - name: "macos-14"
-            format: "IPA"
-            platform: "IOS"
-            build_env: ${{github.event.client_payload.build_env}}
-            build_cmd: ios build_ios
-            deploy_cmd: ios deploy_ios
-          - name: "ubuntu-22.04"
-            format: "APK"
-            platform: "ANDROID"
-            build_env: ${{github.event.client_payload.build_env}}
-            build_cmd: android build_apk
-            deploy_cmd: android distribute_firebase_apk
-          - name: "ubuntu-22.04"
-            format: "AAB"
-            platform: "ANDROID"
-            build_env: ${{github.event.client_payload.build_env}}
-            build_cmd: android build_aab
-            deploy_cmd: android distribute_firebase_aab
-            condition: ${{ github.event.client_payload.build_env != 'stg' }}
+        # include:
+        #   - name: "macos-14"
+        #     format: "IPA"
+        #     platform: "IOS"
+        #     build_env: ${{github.event.client_payload.build_env}}
+        #     build_cmd: ios build_ios
+        #     deploy_cmd: ios deploy_ios
+        #   - name: "ubuntu-22.04"
+        #     format: "APK"
+        #     platform: "ANDROID"
+        #     build_env: ${{github.event.client_payload.build_env}}
+        #     build_cmd: android build_apk
+        #     deploy_cmd: android distribute_firebase_apk
+        #   - name: "ubuntu-22.04"
+        #     format: "AAB"
+        #     platform: "ANDROID"
+        #     build_env: ${{github.event.client_payload.build_env}}
+        #     build_cmd: android build_aab
+        #     deploy_cmd: android distribute_firebase_aab
+        #     condition: ${{ github.event.client_payload.build_env != 'stg' }}
     runs-on: ${{ matrix.name }}
     timeout-minutes: 60
     steps:
