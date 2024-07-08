@@ -131,7 +131,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        # include: ${{ fromJson(needs.init.outputs.matrix) }}
+        include: ${{ fromJson(needs.init.outputs.matrix) }}
         # name: ["macos-14", "ubuntu-22.04", "ubuntu-22.04"]
         # format:
         #   - "IPA"
@@ -179,9 +179,6 @@ jobs:
             build_cmd: android build_aab
             deploy_cmd: android distribute_firebase_aab
             condition: ${{ github.event.client_payload.build_env != 'stg' }}
-    concurrency:
-      group: ${{ github.workflow }}-${{ matrix.format }}
-      cancel-in-progress: ${{ matrix.format == 'AAB' && github.event.client_payload.build_env == 'stg' }}
     runs-on: ${{ matrix.name }}
     timeout-minutes: 60
     steps:
@@ -275,7 +272,7 @@ jobs:
         run: bash scripts/load_build_configuration
 
       - name: Change Version And Build Number
-        run: bash scripts/config_build_version.sh
+        run: bash scripts/load_build_version.sh
 
       - name: Generate launcher icon
         uses: borales/actions-yarn@v5
