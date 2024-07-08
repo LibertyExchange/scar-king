@@ -269,7 +269,7 @@ jobs:
         run: bash scripts/load_secret_file.sh
 
       - name: Config Environment
-        run: bash scripts/load_build_configuration
+        run: bash scripts/load_build_configuration.sh
 
       - name: Change Version And Build Number
         run: bash scripts/load_build_version.sh
