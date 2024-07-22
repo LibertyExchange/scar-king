@@ -20,10 +20,10 @@ env:
   PRO_GOOGLESERVICE_INFO_PLIST: ${{ secrets.PRO_GOOGLESERVICE_INFO_PLIST }}
   # BUILD ENVIRONMENT VARIABLE
   REF_NAME: ${{github.event.client_payload.ref_name}}
-  BUILD_ENV: ${{github.event.client_payload.build_env}}
-  BUILD_VERSION: ${{github.event.client_payload.build_version}}
-  BUILD_NUMBER: ${{github.event.client_payload.build_number}}
-  BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
+  # BUILD_ENV: ${{github.event.client_payload.build_env}}
+  # BUILD_VERSION: ${{github.event.client_payload.build_version}}
+  # BUILD_NUMBER: ${{github.event.client_payload.build_number}}
+  # BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
   P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
   # TELEGRAM
   TELEGRAM_GROUP_ID: ${{secrets.TELEGRAM_GROUP_ID}}
@@ -44,6 +44,7 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.value }}
       # message-information: ${{ steps.get-message-information.outputs.value }}
+      env: ${{ steps.set-env.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,13 +55,15 @@ jobs:
 
       - name: Load Build Environment
         id: set-env
-        run: bash scripts/load_build_environment.sh
+        run: |
+          bash scripts/load_build_environment.sh
+          echo "value=$BUILD_ENV" >> $GITHUB_OUTPUT
 
       - name: Set matrix
         id: set-matrix
         run: |
           MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
-          if [[ "$BUILD_VERSION_ENV" == "pro" ]]; then
+          if [[ "$BUILD_ENV" == "pro" ]]; then
             MATRIX="[{\"format\":\"IPA\",\"name\":\"macos-14\",\"platform\":\"IOS\"},{\"format\":\"APK\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"},{\"format\":\"AAB\",\"name\":\"ubuntu-22.04\",\"platform\":\"ANDROID\"}]"
           fi
           echo "value=$MATRIX" >> $GITHUB_OUTPUT
@@ -255,8 +258,8 @@ jobs:
         uses: irgaly/xcode-cache@v1
         if: matrix.platform == 'IOS'
         with:
-          key: xcode-cache-deriveddata-${{env.BUILD_ENV}}-${{ hashFiles('yarn.lock') }}
-          restore-keys: xcode-cache-deriveddata-${{env.BUILD_ENV}}-
+          key: xcode-cache-deriveddata-${{ needs.init.outputs.env }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: xcode-cache-deriveddata-${{ needs.init.outputs.env }}-
 
       # NOTE: Load Environment Variable
       - name: Load Build Environment
