@@ -11,8 +11,6 @@ env:
   NO_FLIPPER: 1
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
-  GH_PAT: ${{secrets.GH_PAT}}
-  MAIN_REPOSITORY: ${{secrets.MAIN_REPOSITORY}}
   # BUILD ENVIRONMENT FILE
   API_KEY_JSON: ${{ secrets.API_KEY_JSON }}
   FIREBASE_CLI_TOKEN: ${{secrets.FIREBASE_CLI_TOKEN}}
@@ -50,9 +48,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.MAIN_REPOSITORY }}
-          token: ${{ env.GH_PAT }}
-          ref: ${{ env.REF_NAME}}
+          repository: ${{secrets.MAIN_REPOSITORY}}
+          token: ${{secrets.GH_PAT}}
+          ref: ${{github.event.client_payload.ref_name}}
 
       - name: Load Build Environment
         id: set-env
@@ -87,14 +85,13 @@ jobs:
           - name: "ubuntu-22.04"
             platform: "ANDROID"
     runs-on: ${{ matrix.name }}
-    # if: matrix.node-version != '14.x'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.MAIN_REPOSITORY }}
-          token: ${{ env.GH_PAT }}
-          ref: ${{ env.REF_NAME}}
+          repository: ${{secrets.MAIN_REPOSITORY}}
+          token: ${{secrets.GH_PAT}}
+          ref: ${{github.event.client_payload.ref_name}}
 
       - name: Setup Node Version
         uses: actions/setup-node@v4
@@ -185,9 +182,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.MAIN_REPOSITORY }}
-          token: ${{ env.GH_PAT }}
-          ref: ${{ env.REF_NAME}}
+          repository: ${{secrets.MAIN_REPOSITORY}}
+          token: ${{secrets.GH_PAT}}
+          ref: ${{github.event.client_payload.ref_name}}
 
       # NOTE: Setup Build Environment
       - name: Setup ruby 3.0.0
