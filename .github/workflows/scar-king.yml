@@ -329,7 +329,7 @@ jobs:
         if: matrix.format == 'AAB'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: android build_aab
+          lane: android build_android_aab
 
       # NOTE: deploy
       - name: Deploy ipa
@@ -344,11 +344,11 @@ jobs:
         with:
           lane: android deploy_android_apk
 
-      # - name: Deploy AAB to playstore
-      #   if: matrix.format == 'AAB'
-      #   uses: maierj/fastlane-action@v3.1.0
-      #   with:
-      #     lane: android upload_to_open_testing_play_store
+      - name: Deploy AAB to playstore
+        if: matrix.format == 'AAB'
+        uses: maierj/fastlane-action@v3.1.0
+        with:
+          lane: android deploy_android_aab
 
       # - name: Send telegram message
       #   if: vars.IS_SILENT != 'true'
