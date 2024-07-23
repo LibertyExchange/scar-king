@@ -132,53 +132,78 @@ jobs:
       fail-fast: true
       matrix:
         include: ${{ fromJson(needs.init.outputs.matrix) }}
-        # name: ["macos-14", "ubuntu-22.04", "ubuntu-22.04"]
-        # format:
-        #   - "IPA"
-        #   - "APK"
-        #   - "AAB"
-        # build_env:
-        #   - "stg"
-        # exclude:
-        #   # - build_enabled: false
-        #   - format: "AAB"
-        #     build_env: "stg"
-        # include:
-        #   - format: "IPA"
-        #     name: "macos-14"
-        #     platform: "IOS"
-        #     build_cmd: "ios build_ios"
-        #     deploy_cmd: "ios deploy_ios"
-        #   - format: "APK"
-        #     name: "ubuntu-22.04"
-        #     platform: "ANDROID"
-        #     build_cmd: "android build_apk"
-        #     deploy_cmd: "android distribute_firebase_apk"
-        #   - format: "AAB"
-        #     name: "ubuntu-22.04"
-        #     platform: "ANDROID"
-        #     build_cmd: "android build_aab"
-        #     deploy_cmd: "android distribute_firebase_aab"
-        # include:
-        #   - name: "macos-14"
-        #     format: "IPA"
-        #     platform: "IOS"
-        #     build_env: ${{github.event.client_payload.build_env}}
-        #     build_cmd: ios build_ios
-        #     deploy_cmd: ios deploy_ios
-        #   - name: "ubuntu-22.04"
-        #     format: "APK"
-        #     platform: "ANDROID"
-        #     build_env: ${{github.event.client_payload.build_env}}
-        #     build_cmd: android build_apk
-        #     deploy_cmd: android distribute_firebase_apk
-        #   - name: "ubuntu-22.04"
-        #     format: "AAB"
-        #     platform: "ANDROID"
-        #     build_env: ${{github.event.client_payload.build_env}}
-        #     build_cmd: android build_aab
-        #     deploy_cmd: android distribute_firebase_aab
-        #     condition: ${{ github.event.client_payload.build_env != 'stg' }}
+      #   # name: ["macos-14", "ubuntu-22.04", "ubuntu-22.04"]
+      #   format:
+      #     - "IPA"
+      #     - "APK"
+      #     - "AAB"
+      #   build_env:
+      #     - "stg"
+      #     - "pro"
+      #   # exclude:
+      #   #   # - build_enabled: false
+      #   #   - format: "AAB"
+      #   #     build_env: "stg"
+      #   include:
+      #     - format: "IPA"
+      #       name: "macos-14"
+      #       platform: "IOS"
+      #       build_cmd: "ios build_ios"
+      #       deploy_cmd: "ios deploy_ios"
+      #     - format: "APK"
+      #       name: "ubuntu-22.04"
+      #       platform: "ANDROID"
+      #       build_cmd: "android build_apk"
+      #       deploy_cmd: "android distribute_firebase_apk"
+      #     - format: "AAB"
+      #       name: "ubuntu-22.04"
+      #       platform: "ANDROID"
+      #       build_cmd: "android build_aab"
+      #       deploy_cmd: "android distribute_firebase_aab"
+      #     exclude:
+      #       - format: "AAB"
+      #       - env: stg
+      #   # include:
+      #   #   - name: "macos-14"
+      #   #     format: "IPA"
+      #   #     platform: "IOS"
+      #   #     build_env: ${{github.event.client_payload.build_env}}
+      #   #     build_cmd: ios build_ios
+      #   #     deploy_cmd: ios deploy_ios
+      #   #   - name: "ubuntu-22.04"
+      #   #     format: "APK"
+      #   #     platform: "ANDROID"
+      #   #     build_env: ${{github.event.client_payload.build_env}}
+      #   #     build_cmd: android build_apk
+      #   #     deploy_cmd: android distribute_firebase_apk
+      #   #   - name: "ubuntu-22.04"
+      #   #     format: "AAB"
+      #   #     platform: "ANDROID"
+      #   #     build_env: ${{github.event.client_payload.build_env}}
+      #   #     build_cmd: android build_aab
+      #   #     deploy_cmd: android distribute_firebase_aab
+      #   #     condition: ${{ github.event.client_payload.build_env != 'stg' }}
+      # matrix:
+      #   build_type: [IPA, APK, AAB]
+      #   include:
+      #     # Staging environment jobs
+      #     - build_type: IPA
+      #       env: ${{needs.init.outputs.env}}
+      #       platform: ios
+      #       name: "iOS Staging IPA Build"
+      #     - build_type: APK
+      #       env: ${{needs.init.outputs.env}}
+      #       platform: android
+      #       name: "Android Staging APK Build"
+      #     - build_type: AAB
+      #       env: ${{needs.init.outputs.env}}
+      #       platform: android
+      #       name: "Android Production AAB Build"
+      #   exclude:
+      #     # Exclude AAB build for staging
+      #     - build_type: AAB
+      #       env: stg
+
     runs-on: ${{ matrix.name }}
     timeout-minutes: 60
     steps:
@@ -298,10 +323,10 @@ jobs:
         if: matrix.format == 'APK'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: android build_apk
+          lane: android build_android_apk
 
       - name: Build AAB
-        if: ${{(matrix.format == 'AAB') && ('${BUILD_VERSION_ENV}' == 'pro')}}
+        if: matrix.format == 'AAB'
         uses: maierj/fastlane-action@v3.1.0
         with:
           lane: android build_aab
@@ -317,7 +342,7 @@ jobs:
         if: matrix.format == 'APK'
         uses: maierj/fastlane-action@v3.1.0
         with:
-          lane: android distribute_firebase_apk
+          lane: android deploy_android_apk
 
       # - name: Deploy AAB to playstore
       #   if: matrix.format == 'AAB'
