@@ -21,6 +21,10 @@ env:
   # BUILD ENVIRONMENT VARIABLE
   REF_NAME: ${{github.event.client_payload.ref_name}}
   P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+  BUILD_ENV: ${{github.event.client_payload.build_env}}
+  BUILD_VERSION: ${{github.event.client_payload.build_version}}
+  BUILD_NUMBER: ${{github.event.client_payload.build_number}}
+  BUILD_ACTOR: ${{github.event.client_payload.build_actor}}
   # TELEGRAM
   TELEGRAM_GROUP_ID: ${{secrets.TELEGRAM_GROUP_ID}}
   TELEGRAM_TOPIC_ID: ${{secrets.TELEGRAM_TOPIC_ID}}
